@@ -4,6 +4,7 @@ package com.example.capstonemap.polyLine;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.Executors;
+import java.util.HashMap;
 
 import android.graphics.Color;
 import android.os.Handler;
@@ -14,6 +15,7 @@ import com.example.capstonemap.MakeApiRequest.MakeApiRequest;
 import com.example.capstonemap.BuildConfig;
 import com.example.capstonemap.MapsActivity;
 import com.google.android.gms.maps.model.LatLng;
+import com.google.android.gms.maps.model.Polyline;
 import com.google.android.gms.maps.model.PolylineOptions;
 
 import org.json.JSONArray;
@@ -22,6 +24,10 @@ import org.json.JSONObject;
 // 폴리라인을 길에 맞춰 그리는 함수 구현
 
 public class PolyLine {
+
+    //폴리라인의 정보를 담는 해시맵
+    private static final HashMap<String, Polyline> polylineMap = new HashMap<>();
+    private static String lastEncoded;
 
     // url에 응답을 요청하는 함수
     public static void getDirections(LatLng origin, LatLng destination) {
@@ -67,14 +73,22 @@ public class PolyLine {
                 for (int i = 0; i < legs.length(); i++) {
                     JSONArray steps = legs.getJSONObject(i).getJSONArray("steps");
                     for (int j = 0; j < steps.length(); j++) {
+
                         String polyline = steps.getJSONObject(j).getJSONObject("polyline").getString("points");
                         path.addAll(decodePolyline(polyline));
                     }
                 }
             }
 
+            // polyline과 encoded는 폴리라인의 정보를 저장하기 위함임
             PolylineOptions polylineOptions = new PolylineOptions().addAll(path).color(Color.BLUE).width(5);
-            MapsActivity.getMap().addPolyline(polylineOptions);
+            Polyline polyline=MapsActivity.getMap().addPolyline(polylineOptions);
+            String encodedPath = jsonObject.getJSONArray("routes").getJSONObject(0)
+                    .getJSONObject("overview_polyline").getString("points");
+            lastEncoded=encodedPath;
+
+            polylineMap.put(encodedPath, polyline);
+
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -111,5 +125,22 @@ public class PolyLine {
         }
 
         return poly;
+    }
+
+    // 해시맵에서는 제거 안하게만듦
+    // 특정 encoded 경로를 기반으로 지도에서만 폴리라인 삭제
+    public static void removePolyline(String encodedPath) {
+        // 저장된 Polyline 객체를 가져와 지도에서 제거
+        Polyline polyline = polylineMap.get(encodedPath);
+        if (polyline != null) {
+            polyline.remove();  // 지도에서 폴리라인 제거
+            Log.d("REMOVE_POLYLINE", "Polyline removed for path: " + encodedPath);
+        } else {
+            Log.e("REMOVE_POLYLINE", "No Polyline found for path: " + encodedPath);
+        }
+    }
+
+    public static String getLastEncoded(){
+        return lastEncoded;
     }
 }

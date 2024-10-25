@@ -9,12 +9,14 @@ import android.os.Bundle;
 import android.os.AsyncTask;
 import android.graphics.Color;
 
+import com.example.capstonemap.click.ClickPolyLine;
 import com.example.capstonemap.polyLine.PolyLine;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.LatLng;
+import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.example.capstonemap.databinding.ActivityMapsBinding;
 import androidx.core.app.ActivityCompat;
@@ -58,6 +60,8 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
         if (mapFragment != null) {
             mapFragment.getMapAsync(this);
         }
+
+
     }
 
     @Override
@@ -79,9 +83,13 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
         LatLng destination = new LatLng(35.65130445276861, 139.77898822344184);
         Log.d("MAP_ACTIVITY", "Calling getDirections");
         PolyLine.getDirections(origin, destination);
+
+        ClickPolyLine.clickPolyLine(mMap);
+
     }
 
-    private void enableMyLocation() {
+
+            private void enableMyLocation() {
         // 실시간 gps 위치 표시하는 기능 위치 허용 안했으면 허용할건지 묻고, 허용 했으면 실시간 위치 켬.
         // 실시간 gps 위치를 불러올 수 있다면 기본적으로 그 위치가 지도에 뜨게 함.
         if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
@@ -95,25 +103,6 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
                             mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(currentLatLng, 15));
                         }
                     });
-        }
-    }
-
-    private void getCurrentLocation() {
-        // 위치 권한이 있는지 확인 후 현재 위치 가져오기
-        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
-            fusedLocationClient.getLastLocation()
-                    .addOnSuccessListener(this, location -> {
-                        if (location != null) {
-                            // 현재 위치를 LatLng 객체로 변환
-                            LatLng currentLatLng = new LatLng(location.getLatitude(), location.getLongitude());
-
-                            // 현재 위치로 카메라 이동
-                            mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(currentLatLng, 15));
-                        } else {
-                            Log.e("MAP_ACTIVITY", "현재 위치를 가져올 수 없습니다.");
-                        }
-                    })
-                    .addOnFailureListener(e -> Log.e("MAP_ACTIVITY", "현재 위치 가져오기 실패: " + e.getMessage()));
         }
     }
 

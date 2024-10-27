@@ -27,18 +27,18 @@ public class SecurityConfig {
         this.userService = userService;
         this.jwtRequestFilter = jwtRequestFilter;
     }
-    
-    // register, login만 허용함.
+
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http
-            .csrf(csrf -> csrf.disable())  // CSRF 비활성화 (REST API의 경우)
-            .authorizeHttpRequests(authorize -> authorize
-                .requestMatchers("/api/users/register", "/api/users/login", "/greeting").permitAll()
-                .anyRequest().authenticated()
+            .csrf(csrf -> csrf.disable())  // CSRF 비활성화
+            .authorizeHttpRequests(authorize -> authorize  // H2 콘솔 경로 허용
+                .anyRequest().permitAll()  // 모든 요청 허용
             )
-            .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS));
+            .headers(headers -> headers.frameOptions().disable())  // H2 콘솔을 위한 프레임 옵션 비활성화
+            .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS));  // 세션 비활성화 (JWT 사용 시)
 
+        // H2 콘솔 경로는 JwtRequestFilter 적용 제외
         http.addFilterBefore(jwtRequestFilter, UsernamePasswordAuthenticationFilter.class);
 
         return http.build();

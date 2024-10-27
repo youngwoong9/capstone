@@ -35,6 +35,14 @@ public class JwtRequestFilter extends OncePerRequestFilter {
             throws ServletException, IOException {
     	System.out.println("jwtRequestFilter is executing...");
     	log.debug("jwtRequestFilter is executing...");
+    	
+        String path = request.getRequestURI();
+
+        // H2 콘솔 경로라면 필터 건너뛰기
+        if (path.startsWith("/")) {
+            chain.doFilter(request, response);
+            return;
+        }
 
         final String authorizationHeader = request.getHeader("Authorization");
 

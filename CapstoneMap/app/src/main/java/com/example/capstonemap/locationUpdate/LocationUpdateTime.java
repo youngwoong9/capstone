@@ -7,8 +7,8 @@ import com.google.android.gms.location.Priority;
 public class LocationUpdateTime {
     public static LocationRequest locationRequestSetting(){
         // LocationRequest 생성
-        LocationRequest locationRequest = new LocationRequest.Builder(Priority.PRIORITY_HIGH_ACCURACY, 10000) // 10초 간격
-                .setMinUpdateIntervalMillis(5000) // 최소 업데이트 간격 5초
+        LocationRequest locationRequest = new LocationRequest.Builder(Priority.PRIORITY_HIGH_ACCURACY, 5000) // 1000초 간격 <- 비용문제
+                .setMinUpdateIntervalMillis(1000) // 최소 업데이트 간격 500초 <- 비용때문에
                 .build();
 
         return locationRequest;

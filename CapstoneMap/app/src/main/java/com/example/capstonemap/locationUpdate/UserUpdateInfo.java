@@ -15,7 +15,7 @@ public class UserUpdateInfo {
         this.courseInOut = courseInOut;
     }
 
-    public void updateUserInfo(double latitude, double longitude, float speed) {
+    public void updateUserInfo(double latitude, double longitude, double speed) {
         // DTO 업데이트 및 평균 속도 계산
         updateUserDto(latitude, longitude, speed);
         updateAverageSpeed();
@@ -44,7 +44,7 @@ public class UserUpdateInfo {
         userUpdateDto.setElapsedTime((System.currentTimeMillis() - userUpdateDto.getStartedTime()) / 1000);
     }
 
-    private void updateUserDto(double latitude, double longitude, float speed) {
+    private void updateUserDto(double latitude, double longitude, double speed) {
         userUpdateDto.setLatitude(latitude);
         userUpdateDto.setLongitude(longitude);
         userUpdateDto.setSpeed(speed);

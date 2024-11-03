@@ -9,10 +9,16 @@
     tools:context=".MapsActivity">
 
     <TextView
-        android:id="@+id/textView"
+        android:id="@+id/speedTextView"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Hello World!" />
+        android:layout_gravity="top|center_horizontal"
+        android:background="#AA000000"
+        android:padding="8dp"
+        android:textColor="#FFFFFF"
+        android:textSize="18sp"
+        android:text="Speed: 0.00 km/h" />
+
 
     <fragment
         android:id="@+id/map"

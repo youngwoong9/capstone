@@ -9,7 +9,10 @@ import androidx.core.app.ActivityCompat;
 import android.Manifest;
 import android.content.pm.PackageManager;
 import android.location.Location;
+import android.location.LocationManager;
+import android.location.provider.ProviderProperties;
 import android.os.Bundle;
+import android.os.Handler;
 import android.os.Looper;
 import android.util.Log;
 import android.widget.Toast;
@@ -32,15 +35,25 @@ import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MarkerOptions;
 
+import java.util.Collections;
+import java.util.Locale;
+
 public class MapsActivity extends AppCompatActivity implements OnMapReadyCallback {
 
+    private static final double MOCK_SPEED_M_S = 4.167; // 시속 15km/h를 m/s로 변환
+    private static final String MOCK_PROVIDER = "mockProvider";
     private static GoogleMap mMap;
     private ActivityMapsBinding binding;
-    private static final int LOCATION_PERMISSION_REQUEST_CODE = 1;
+    private LocationManager locationManager;
     private FusedLocationProviderClient fusedLocationClient;
     private LocationRequest locationRequest;
     private UserUpdateInfo userUpdateInfo;
     private LocationCallback locationCallback;
+    private static final int LOCATION_PERMISSION_REQUEST_CODE = 1;
+
+    private double latitude = 37.506632;  // 시작 위도
+    private double longitude = 126.960733;  // 시작 경도
+    private final Handler handler = new Handler();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -87,12 +100,16 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
             }
         };
 
+        // LocationManager 초기화 및 모의 위치 제공자 설정
+        locationManager = (LocationManager) getSystemService(LOCATION_SERVICE);
+        setupMockProvider();
+
         // GoogleMap 초기화 요청
-        SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager()
-                .findFragmentById(R.id.map);
+        SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager().findFragmentById(R.id.map);
         if (mapFragment != null) {
             mapFragment.getMapAsync(this);
         }
+
     }
 
     @Override
@@ -116,6 +133,9 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
 
         // 위치 업데이트 시작
         startLocationUpdates();
+
+        // 모의 이동
+        startMockMovement();
     }
 
     private void enableMyLocation() {
@@ -128,19 +148,59 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
             try {
                 if (mMap != null) {
                     mMap.setMyLocationEnabled(true);
-                    fusedLocationClient.getLastLocation()
-                            .addOnSuccessListener(this, location -> {
-                                if (location != null) {
-                                    LatLng currentLatLng = new LatLng(location.getLatitude(), location.getLongitude());
-                                    mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(currentLatLng, 15));
-                                }
-                            });
                 }
             } catch (SecurityException e) {
                 Log.e("MapsActivity", "Location permission denied", e);
                 Toast.makeText(this, "Location permission denied", Toast.LENGTH_SHORT).show();
             }
         }
+    }
+
+    private void setupMockProvider() {
+        try {
+            if (!locationManager.isProviderEnabled(MOCK_PROVIDER)) {
+                locationManager.addTestProvider(MOCK_PROVIDER, false, false, false, false, true,
+                        true, true, ProviderProperties.POWER_USAGE_HIGH, ProviderProperties.ACCURACY_COARSE);
+                locationManager.setTestProviderEnabled(MOCK_PROVIDER, true);
+                Log.d("MapsActivity", "Mock provider added and enabled");
+            }
+        } catch (SecurityException e) {
+            Toast.makeText(this, "Mock location permission is required", Toast.LENGTH_SHORT).show();
+        }
+    }
+
+    private void startMockMovement() {
+        handler.postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                // 이동 경로를 시뮬레이션하여 경도와 위도를 조금씩 변화
+                latitude += 0.00001;  // 이동량 조정
+                longitude += 0.00001;
+
+                // 모의 위치 생성 및 설정
+                Location mockLocation = new Location(MOCK_PROVIDER);
+                mockLocation.setLatitude(latitude);
+                mockLocation.setLongitude(longitude);
+                mockLocation.setAccuracy(1.0f);
+                mockLocation.setSpeed((float) MOCK_SPEED_M_S); // 시속 15km/h로 설정
+                mockLocation.setTime(System.currentTimeMillis());
+                mockLocation.setElapsedRealtimeNanos(System.nanoTime());  // 시스템 타임 추가
+
+                try {
+                    // 모의 위치 업데이트 전송
+                    locationManager.setTestProviderLocation(MOCK_PROVIDER, mockLocation);
+                    updateMockLocation(mockLocation.getLatitude(), mockLocation.getLongitude());
+                    Log.d("MapsActivity", "Mock location updated: Lat=" + latitude + ", Lng=" + longitude);
+                }  catch (SecurityException e) {
+                    Log.e("MapsActivity", "SecurityException: Mock location permission not granted", e);
+                } catch (IllegalArgumentException e) {
+                    Log.e("MapsActivity", "IllegalArgumentException: Issue with mock location provider", e);
+                }
+
+                // 1초마다 업데이트
+                handler.postDelayed(this, 1000);
+            }
+        }, 1000);
     }
 
     private void startLocationUpdates() {
@@ -159,6 +219,18 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
         }
     }
 
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        try {
+            locationManager.removeTestProvider(MOCK_PROVIDER);  // 사용한 테스트 프로바이더의 이름에 따라 변경
+        } catch (SecurityException e) {
+            e.printStackTrace();
+            // 예외가 발생한 경우 Mock Location 권한이 없음을 의미
+        }
+    }
+
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults);
@@ -174,5 +246,35 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
 
     public static GoogleMap getMap() {
         return mMap;
+    }
+
+
+    // 여기서 부터 모의로 속도 구하는 함수
+    private Location previousLocation;
+    private long previousTime;
+
+    private void updateMockLocation(double latitude, double longitude) {
+        Location currentLocation = new Location(MOCK_PROVIDER);
+        currentLocation.setLatitude(latitude);
+        currentLocation.setLongitude(longitude);
+        currentLocation.setTime(System.currentTimeMillis());
+
+        // 이전 위치가 있다면 속도를 계산
+        if (previousLocation != null) {
+            float distance = previousLocation.distanceTo(currentLocation); // 거리(m)
+            long timeDelta = currentLocation.getTime() - previousTime; // 시간 차이(ms)
+
+            if (timeDelta > 0) {
+                float speed = (distance / timeDelta) * 1000; // m/s 단위로 변환
+                float speedKmH = speed * 3.6f; // km/h 단위로 변환
+                Log.d("MapsActivity", "Calculated speed: " + speedKmH + " km/h");
+
+                binding.speedTextView.setText(String.format(Locale.US, "Speed: %.2f km/h", speedKmH));
+            }
+        }
+
+        // 현재 위치와 시간을 이전 위치로 저장
+        previousLocation = currentLocation;
+        previousTime = currentLocation.getTime();
     }
 }

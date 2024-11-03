@@ -22,8 +22,6 @@ public class ApiActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_maps);
 
-        textView = findViewById(R.id.textView);
-
         // Retrofit 설정 및 API 호출
         ApiService apiService = ApiClient.getClient().create(ApiService.class);
         Call<String> call = apiService.getGreeting();

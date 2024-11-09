@@ -17,25 +17,24 @@ import android.os.Looper;
 import android.util.Log;
 import android.widget.Toast;
 
-import com.example.capstonemap.click.ClickPolyLine;
+import com.example.capstonemap.polyLine.ClickPolyLine;
 import com.example.capstonemap.polyLine.PolyLine;
 import com.example.capstonemap.databinding.ActivityMapsBinding;
 import com.example.capstonemap.locationUpdate.UserUpdateInfo;
 import com.example.capstonemap.locationUpdate.CourseInOut;
 import com.example.capstonemap.locationUpdate.GeoFenceListener;
+import com.example.capstonemap.user.UserDto;
 import com.google.android.gms.location.FusedLocationProviderClient;
 import com.google.android.gms.location.LocationCallback;
 import com.google.android.gms.location.LocationRequest;
 import com.google.android.gms.location.LocationResult;
 import com.google.android.gms.location.LocationServices;
-import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MarkerOptions;
 
-import java.util.Collections;
 import java.util.Locale;
 
 public class MapsActivity extends AppCompatActivity implements OnMapReadyCallback {
@@ -119,6 +118,9 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
 
         mMap.getUiSettings().setZoomControlsEnabled(true);
 
+        //임시적인 유저생성 지워야함.
+        UserDto userDto=new UserDto(1L, "a", "a");
+
         // 지도에 기본 마커 추가
         LatLng location = new LatLng(37.506632, 126.960733);
         mMap.addMarker(new MarkerOptions().position(location).title("Jung-dae Hospital"));
@@ -129,7 +131,7 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
         PolyLine.getDirections(origin, destination);
 
         // 클릭 이벤트 설정
-        ClickPolyLine.clickPolyLine(mMap);
+        ClickPolyLine.clickPolyLine(mMap, userDto);
 
         // 위치 업데이트 시작
         startLocationUpdates();

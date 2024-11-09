@@ -1,7 +1,7 @@
 package com.example.capstonemap;
 
 import com.example.capstonemap.bootApiTest.ApiService;
-import com.example.capstonemap.service.RouteApiService;
+import com.example.capstonemap.polyLine.RouteApiService;
 
 import retrofit2.Retrofit;
 import retrofit2.converter.gson.GsonConverterFactory;

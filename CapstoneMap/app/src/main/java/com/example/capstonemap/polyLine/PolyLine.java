@@ -24,6 +24,7 @@ import org.json.JSONObject;
 // 폴리라인을 길에 맞춰 그리는 함수 구현
 
 public class PolyLine {
+    RouteRepository routeRepository=new RouteRepository();
 
     //폴리라인의 정보를 담는 해시맵
     private static final HashMap<String, Polyline> polylineMap = new HashMap<>();
@@ -81,6 +82,7 @@ public class PolyLine {
             }
 
             // polyline과 encoded는 폴리라인의 정보를 저장하기 위함임
+            // 여기서 옵션을 건드리면 색깔과 굵기를 바꿀 수 있음
             PolylineOptions polylineOptions = new PolylineOptions().addAll(path).color(Color.BLUE).width(5);
             Polyline polyline=MapsActivity.getMap().addPolyline(polylineOptions);
             String encodedPath = jsonObject.getJSONArray("routes").getJSONObject(0)

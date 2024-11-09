@@ -25,10 +25,22 @@ public class Route {
 	private String encodedPath;
 	private String locationListJson;
 	
+	private Long userId;
+	
+	
+	// 유저 아이디 안받는 버전(테스트용)
 	public Route(Long id, String name, String encodedPath, String locationListJson) {
 		this.id=id;
 		this.name=name;
 		this.encodedPath=encodedPath;
 		this.locationListJson=locationListJson;
+	}
+	
+	public Route(Long id, String name, String encodedPath, String locationListJson, Long userId) {
+		this.id=id;
+		this.name=name;
+		this.encodedPath=encodedPath;
+		this.locationListJson=locationListJson;
+		this.userId=userId;
 	}
 }

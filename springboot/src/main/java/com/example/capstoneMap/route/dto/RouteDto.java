@@ -22,6 +22,7 @@ public class RouteDto {
 	private String name;
 	private String encodedPath;
 	private ArrayList<Double[]> locationList;
+	private Long userId;
 	
 	
 	public RouteDto(String name, String encodedPath ,ArrayList<Double[]> locationList) {

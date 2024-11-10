@@ -1,7 +1,10 @@
 package com.example.capstoneMap.route.dto;
 
 import java.util.ArrayList;
+import java.util.List;
 
+import com.example.capstoneMap.dto.UserDto;
+import com.example.capstoneMap.login.entity.User;
 import com.example.capstoneMap.route.Entity.Route;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
@@ -21,21 +24,29 @@ public class RouteDto {
 	private Long id;
 	private String name;
 	private String encodedPath;
-	private ArrayList<Double[]> locationList;
+	private List<Double[]> locationList;
 	private Long userId;
 	
 	
-	public RouteDto(String name, String encodedPath ,ArrayList<Double[]> locationList) {
+	public RouteDto(String name, String encodedPath ,List<Double[]> locationList) {
 	    this.name = name;
 	    this.encodedPath = encodedPath;
 	    this.locationList = locationList; 
+	}
+	
+	public RouteDto(String name, String encodedPath ,List<Double[]> locationList, Long userId) {
+	    this.name = name;
+	    this.encodedPath = encodedPath;
+	    this.locationList = locationList; 
+	    this.userId=userId;
 	}
 	
 	public Route toEntity() {
 		return new Route(id, name, encodedPath, convertLocationListToJson(locationList));
 	}
 	
-	private String convertLocationListToJson(ArrayList<Double[]> locationList) {
+	
+	private String convertLocationListToJson(List<Double[]> locationList) {
 	    try {
 	        ObjectMapper mapper = new ObjectMapper();
 	        String json = mapper.writeValueAsString(locationList);

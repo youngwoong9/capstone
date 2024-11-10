@@ -1,8 +1,10 @@
 package com.example.capstoneMap.dto;
 
 import java.util.ArrayList;
+import java.util.List;
 
 import com.example.capstoneMap.login.entity.User;
+import com.example.capstoneMap.route.Entity.Route;
 import com.example.capstoneMap.route.dto.RouteDto;
 
 import lombok.AllArgsConstructor;
@@ -20,7 +22,7 @@ public class UserDto {
 	private Long id;
 	private String username;
 	private String password;
-	private ArrayList<RouteDto> routes;
+	private List<RouteDto> routeDtos;
 	
 	public UserDto(String username, String password) {
 		this.username=username;
@@ -28,6 +30,16 @@ public class UserDto {
 	}
 	
 	public User toEntity() {
-		return new User(id, username, password);
+		if(routeDtos==null) {
+			return new User(id, username, password);	
+		}else {
+			List<Route> routes=new ArrayList<>();
+			
+			for(RouteDto i : routeDtos) {
+				routes.add(i.toEntity());
+			}
+			
+			return new User(id, username, password, routes);
+		}
 	}
 }

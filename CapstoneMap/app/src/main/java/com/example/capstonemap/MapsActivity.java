@@ -23,6 +23,7 @@ import com.example.capstonemap.databinding.ActivityMapsBinding;
 import com.example.capstonemap.locationUpdate.UserUpdateInfo;
 import com.example.capstonemap.locationUpdate.CourseInOut;
 import com.example.capstonemap.locationUpdate.GeoFenceListener;
+import com.example.capstonemap.routes.GetAllRoutes;
 import com.example.capstonemap.user.UserDto;
 import com.google.android.gms.location.FusedLocationProviderClient;
 import com.google.android.gms.location.LocationCallback;
@@ -138,6 +139,9 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
 
         // 모의 이동
         startMockMovement();
+
+        GetAllRoutes.getAllRoutesButton(binding);
+
     }
 
     private void enableMyLocation() {

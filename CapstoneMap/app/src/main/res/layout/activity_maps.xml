@@ -19,6 +19,16 @@
         android:textSize="18sp"
         android:text="Speed: 0.00 km/h" />
 
+    <!-- 새로 추가된 버튼 -->
+    <Button
+        android:id="@+id/GetAllRoutesButton"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Get All Routes"
+        android:layout_alignParentBottom="true"
+        android:layout_centerHorizontal="true"
+        android:layout_marginBottom="16dp" />
+
 
     <fragment
         android:id="@+id/map"

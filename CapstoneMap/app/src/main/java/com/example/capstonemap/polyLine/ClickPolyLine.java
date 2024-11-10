@@ -1,5 +1,7 @@
 package com.example.capstonemap.polyLine;
 
+import com.example.capstonemap.routes.RouteDto;
+import com.example.capstonemap.routes.RouteRepository;
 import com.example.capstonemap.user.UserDto;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.model.LatLng;
@@ -15,7 +17,6 @@ public class ClickPolyLine {
         final LatLng[] destination = new LatLng[1];  // 도착지를 저장할 배열
         final RouteDto[] routeDto = new RouteDto[1];
         ArrayList<Double[]> locationList=new ArrayList<>();
-        Double[] location=new Double[2];
 
 
         // 지도를 길게 눌렀을 때 마커를 추가하고 폴리라인을 그리는 기능 설정
@@ -35,12 +36,8 @@ public class ClickPolyLine {
 
 
                 // 나중에 코드 다듬어보기
-                location[0]=origin[0].latitude;
-                location[1]=origin[0].longitude;
-                locationList.add(location);
-                location[0]= destination[0].latitude;
-                location[1]= destination[0].longitude;
-                locationList.add(location);
+                locationList.add(new Double[]{origin[0].latitude, origin[0].longitude});
+                locationList.add(new Double[]{destination[0].latitude, destination[0].longitude});
 
                 // 현재 루트 이름은 temproal임 수정하기
                 routeDto[0] =new RouteDto("temporal", PolyLine.getLastEncoded(), locationList);
@@ -63,6 +60,7 @@ public class ClickPolyLine {
     private static void saveRoute(final RouteDto[] routeDto, UserDto userDto){
         Long userId= userDto.getId();
         System.out.println("User ID: " + userId);
+
 
         //리파지토리, 스프링과 연동해서 경로를 만들면 저장함
         routeRepository.saveRoute(routeDto[0], userId,

@@ -1,7 +1,6 @@
 package com.example.capstonemap;
 
-import com.example.capstonemap.bootApiTest.ApiService;
-import com.example.capstonemap.polyLine.RouteApiService;
+import com.example.capstonemap.routes.RouteApiService;
 
 import retrofit2.Retrofit;
 import retrofit2.converter.gson.GsonConverterFactory;
@@ -22,12 +21,7 @@ public class ApiClient {
 
     //ApiClient 클래스의 ApiService를 쓴다.
     //api 인터페이스 객체이다.
-    private static final ApiService apiService = ApiClient.getClient().create(ApiService.class);
     private static final RouteApiService routeApiService = ApiClient.getClient().create(RouteApiService.class);
-
-    public static ApiService getApiService() {
-        return apiService;
-    }
 
     public static RouteApiService getRouteApiService() {
         return routeApiService;

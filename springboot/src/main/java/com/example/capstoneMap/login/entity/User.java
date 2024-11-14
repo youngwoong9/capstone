@@ -50,11 +50,21 @@ public class User {
     	this.password=password;
     }
     
+    // 루트를 추가하면 User 엔티티의 routes에도 추가가됨
     public void addRoute(Route route) {
     	if(routes==null) {
     		routes=new ArrayList<Route>();
     	}
     	
         routes.add(route);
+    }
+    
+    public boolean isOwned(Long routeId, Long userId) {
+        return routes.stream()
+                .anyMatch(route -> route.getId().equals(routeId) && route.getUserId().equals(userId));
+    }
+    
+    public void removeRouteById(Long routeId) {
+        routes.removeIf(route -> route.getId().equals(routeId));
     }
 }

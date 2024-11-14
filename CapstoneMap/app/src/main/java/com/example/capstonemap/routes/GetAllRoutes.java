@@ -15,7 +15,7 @@ import java.util.List;
 //RouteApiService의 getAllRoutes를 쓰는 클래스
 public class GetAllRoutes {
     static RouteRepository routeRepository=new RouteRepository();
-    static List<RouteDto> routeDtoList= new ArrayList<>(); ;
+    static List<RouteDto> routeDtoList= new ArrayList<>();
 
     // 이름은 getAllRoutes지만 사실 routeDtoList 필드에 저장하는(set) 역할도 함.
     private static List<RouteDto> getAllRoutes() {
@@ -65,4 +65,5 @@ public class GetAllRoutes {
                 }
         );
     }
+
 }

@@ -1,12 +1,15 @@
 package com.example.capstoneMap.route.service;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestParam;
 
 import com.example.capstoneMap.dto.UserDto;
 import com.example.capstoneMap.login.entity.User;
@@ -55,4 +58,35 @@ public class RouteService {
     	
     	return ResponseEntity.ok(routeDtos);
     	}
+    
+    @Transactional
+    public ResponseEntity<List<RouteDto>> getUserRoutes(Long userId){
+    	User user=userRepository.findById(userId)
+    			.orElseThrow(() -> new IllegalArgumentException("User not found"));
+    	
+    	List<Route> userRoutes=user.getRoutes();
+    	
+    	
+        List<RouteDto> userRouteDtos = userRoutes.stream()
+                .map(route -> new RouteDto(route.getId(), route.getName(), route.getEncodedPath(), route.getLocationList(), route.getUserId()))
+                .collect(Collectors.toList());
+    	
+    	return ResponseEntity.ok(userRouteDtos);
+    	}
+    
+    @Transactional
+    public ResponseEntity<String> deleteRoute(Long userId, Long routeId){
+    	
+    	User user=userRepository.findById(userId)
+    			.orElseThrow(() -> new IllegalArgumentException("User not found"));
+    	
+    	Boolean isOwned=user.isOwned(routeId, userId);
+    	user.removeRouteById(routeId);
+    	
+    	if(isOwned) {
+    		routeRepository.deleteById(routeId);
+    	}	
+    	
+    	return ResponseEntity.ok("Route deleted successfully"); 
+    }
 }

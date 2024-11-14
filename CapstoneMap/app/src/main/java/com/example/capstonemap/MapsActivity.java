@@ -23,7 +23,9 @@ import com.example.capstonemap.databinding.ActivityMapsBinding;
 import com.example.capstonemap.locationUpdate.UserUpdateInfo;
 import com.example.capstonemap.locationUpdate.CourseInOut;
 import com.example.capstonemap.locationUpdate.GeoFenceListener;
+import com.example.capstonemap.routes.DeleteRoute;
 import com.example.capstonemap.routes.GetAllRoutes;
+import com.example.capstonemap.user.GetUserRoutes;
 import com.example.capstonemap.user.UserDto;
 import com.google.android.gms.location.FusedLocationProviderClient;
 import com.google.android.gms.location.LocationCallback;
@@ -140,7 +142,11 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
         // 모의 이동
         startMockMovement();
 
+        //AllRoutesButton(임시), User의 id를 매개변수로 받는 getUesrRoutesButton(임시)
         GetAllRoutes.getAllRoutesButton(binding);
+        GetUserRoutes.getUserRoutesButton(binding, userDto.getId());
+
+        DeleteRoute.deleteButton(binding,1L, 1L);
 
     }
 

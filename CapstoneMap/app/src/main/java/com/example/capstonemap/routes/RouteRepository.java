@@ -52,4 +52,46 @@ public class RouteRepository {
             }
         });
     }
+
+    public void getUserRoutes(Long userId ,Consumer<List<RouteDto>> onSuccess, Runnable onError) {
+        ApiClient.getRouteApiService().getUserRoutes(userId).enqueue(new Callback<List<RouteDto>>() {
+            @Override
+            public void onResponse(Call<List<RouteDto>> call, Response<List<RouteDto>> response) {
+                if (response.isSuccessful() && response.body() != null) {
+                    onSuccess.accept(response.body());
+                    System.out.println("유저 루트 조회 성공");
+                } else {
+                    onError.run();
+                    System.out.println("유저 루트 조회 실패, 응답 코드: " + response.code());
+                }
+            }
+
+            @Override
+            public void onFailure(Call<List<RouteDto>> call, Throwable t) {
+                onError.run();
+                System.out.println("유저 루트 조회 실패, 오류: " + t.getMessage());
+            }
+        });
+    }
+
+    public void deleteRoute(Long routeId, Long userId, Runnable onSuccess, Runnable onError) {
+        ApiClient.getRouteApiService().deleteRoute(routeId, userId).enqueue(new Callback<Void>() {
+            @Override
+            public void onResponse(Call<Void> call, Response<Void> response) {
+                if (response.isSuccessful()) {
+                    onSuccess.run();
+                    System.out.println("API 호출 성공");
+                } else {
+                    onError.run();
+                    System.out.println("API 호출 실패, 응답 코드: " + response.code());
+                }
+            }
+
+            @Override
+            public void onFailure(Call<Void> call, Throwable t) {
+                onError.run();
+                System.out.println("API 호출 실패, 오류: " + t.getMessage());
+            }
+        });
+    }
 }

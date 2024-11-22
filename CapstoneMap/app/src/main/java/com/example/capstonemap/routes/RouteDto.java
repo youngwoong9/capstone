@@ -25,15 +25,19 @@ public class RouteDto {
     @SerializedName("userId")
     private Long userId;
 
+    @SerializedName("startLocation")
+    private Double[] startLocation;
+
 
     /* 나중에 추가할거
     루트길이, 시작점, 루트 이름 <- 나중에 지어주는 칸을 만들어야함 등등
      */
 
-    public RouteDto(String name, String encodedPath, ArrayList<Double[]> locationList){
+    public RouteDto(String name, String encodedPath, ArrayList<Double[]> locationList, Double[] startLocation){
         this.name = name;
         this.encodedPath = encodedPath;
         this.locationList = locationList;
+        this.startLocation = startLocation;
     }
 
 }

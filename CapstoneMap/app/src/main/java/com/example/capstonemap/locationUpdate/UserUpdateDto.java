@@ -1,49 +1,45 @@
 package com.example.capstonemap.locationUpdate;
 
-import java.util.ArrayList;
 
-//업데이트한 정보를 담는 dto
+// 유저의 정보중 어떤 부분을 업데이트할지 정함(속도나 위도 경도 등)
 public class UserUpdateDto {
-    private double averageSpeed; // 평균 속도
-    private long elapsedTime;   // 경과 시간 (초 단위)
-    private long startedTime;
-    private double latitude;    // 실시간 위도
-    private double longitude;   // 실시간 경도
-    private ArrayList<Double> speedList=new ArrayList<>();        // 속도 배열
-    private ArrayList<Double> latitudeList=new ArrayList<>();
-    private ArrayList<Double> longitudeList=new ArrayList<>();
-    private double speed;
+    private boolean isInCourse = false;
+    private UserUpdateDtoFalse userUpdateDto = new UserUpdateDtoFalse();
 
-    // 기본 생성자
-    public UserUpdateDto() {}
+    // 코스 인아웃 추가해야함.
 
-    // Getter 및 Setter
-    public double getAverageSpeed() { return averageSpeed; }
-    public void setAverageSpeed(double averageSpeed) { this.averageSpeed = averageSpeed; }
-    public long getElapsedTime() { return elapsedTime; }
-    public void setElapsedTime(long elapsedTime) { this.elapsedTime = elapsedTime; }
-    public double getLatitude() { return latitude; }
-    public void setLatitude(double latitude) { this.latitude = latitude;
-    latitudeList.add(latitude);}
-    public double getLongitude() { return longitude; }
-    public void setLongitude(double longitude) { this.longitude = longitude;
-    longitudeList.add(longitude);}
-    public ArrayList<Double> getSpeedList() { return speedList; }
-    public double getSpeed(){return speed;}
-    public void setSpeed(double speed) {
-        if(speedList==null){
-            speedList=new ArrayList<>();
-        }
-        this.speed = speed;
-        speedList.add(speed);}
-    public void setStartedTime(long startedTime){this.startedTime = startedTime;}
-    public long getStartedTime(){return startedTime;}
-
-    public ArrayList<Double> getLatitudeList() {
-        return latitudeList;
+    public void updateUserInfo(double latitude, double longitude, double speed) {
+        // DTO 업데이트 및 평균 속도 계산
+        updateUserDto(latitude, longitude, speed);
+        updateAverageSpeed();
     }
 
-    public ArrayList<Double> getLongitudeList() {
-        return longitudeList;
+    private void updateAverageSpeed() {
+        double totalSpeed = 0;
+        if (userUpdateDto.getSpeedList().isEmpty()) {
+            userUpdateDto.setAverageSpeed(0);
+        } else {
+            for (double s : userUpdateDto.getSpeedList()) {
+                totalSpeed += s;
+            }
+            double averageSpeed = totalSpeed / userUpdateDto.getSpeedList().size();
+            userUpdateDto.setAverageSpeed(averageSpeed);
+        }
+    }
+
+    public void enterCourse() {
+        isInCourse = true;
+        userUpdateDto.setStartedTime(System.currentTimeMillis());
+    }
+
+    public void exitCourse() {
+        isInCourse = false;
+        userUpdateDto.setElapsedTime((System.currentTimeMillis() - userUpdateDto.getStartedTime()) / 1000);
+    }
+
+    private void updateUserDto(double latitude, double longitude, double speed) {
+        userUpdateDto.setLatitude(latitude);
+        userUpdateDto.setLongitude(longitude);
+        userUpdateDto.setSpeed(speed);
     }
 }

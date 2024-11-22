@@ -16,6 +16,7 @@ public class ClickPolyLine {
         final LatLng[] origin = new LatLng[1];  // 출발지를 저장할 배열
         final LatLng[] destination = new LatLng[1];  // 도착지를 저장할 배열
         final RouteDto[] routeDto = new RouteDto[1];
+        Double[] startLocation=new Double[2];
         ArrayList<Double[]> locationList=new ArrayList<>();
 
 
@@ -39,8 +40,11 @@ public class ClickPolyLine {
                 locationList.add(new Double[]{origin[0].latitude, origin[0].longitude});
                 locationList.add(new Double[]{destination[0].latitude, destination[0].longitude});
 
+                startLocation[0]=origin[0].latitude;
+                startLocation[1]=origin[0].longitude;
+
                 // 현재 루트 이름은 temproal임 수정하기
-                routeDto[0] =new RouteDto("temporal", PolyLine.getLastEncoded(), locationList);
+                routeDto[0] =new RouteDto("temporal", PolyLine.getLastEncoded(), locationList, startLocation);
                 Gson gson=new Gson();
                 System.out.println(gson.toJson(routeDto[0]));
 

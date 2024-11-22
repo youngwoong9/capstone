@@ -20,11 +20,9 @@ import android.widget.Toast;
 import com.example.capstonemap.polyLine.ClickPolyLine;
 import com.example.capstonemap.polyLine.PolyLine;
 import com.example.capstonemap.databinding.ActivityMapsBinding;
-import com.example.capstonemap.locationUpdate.UserUpdateInfo;
-import com.example.capstonemap.locationUpdate.CourseInOut;
-import com.example.capstonemap.locationUpdate.GeoFenceListener;
+import com.example.capstonemap.locationUpdate.UserUpdateDto;
 import com.example.capstonemap.routes.DeleteRoute;
-import com.example.capstonemap.routes.GetAllRoutes;
+import com.example.capstonemap.routes.GetRoutes;
 import com.example.capstonemap.user.GetUserRoutes;
 import com.example.capstonemap.user.UserDto;
 import com.google.android.gms.location.FusedLocationProviderClient;
@@ -49,7 +47,7 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
     private LocationManager locationManager;
     private FusedLocationProviderClient fusedLocationClient;
     private LocationRequest locationRequest;
-    private UserUpdateInfo userUpdateInfo;
+    private UserUpdateDto userUpdateDto;
     private LocationCallback locationCallback;
     private static final int LOCATION_PERMISSION_REQUEST_CODE = 1;
 
@@ -66,38 +64,20 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
 
         // FusedLocationProviderClient 및 LocationRequest 설정
         fusedLocationClient = LocationServices.getFusedLocationProviderClient(this);
+
         locationRequest = locationRequestSetting();
 
-        // 지오펜싱 초기화 및 리스너 설정
-        CourseInOut courseInOut = new CourseInOut(new GeoFenceListener() {
-            @Override
-            public void onGeofenceEnter() {
-                if (userUpdateInfo != null) {
-                    userUpdateInfo.enterCourse();
-                }
-            }
-
-            @Override
-            public void onGeofenceExit() {
-                if (userUpdateInfo != null) {
-                    userUpdateInfo.exitCourse();
-                }
-            }
-        });
-
-        // UserUpdateInfo 객체 생성 및 연동
-        userUpdateInfo = new UserUpdateInfo(courseInOut);
-
         // LocationCallback 설정
+        // LocationCallback을 통해서 현재 나의 위치 속도 등을 받아올 수 있다.
         locationCallback = new LocationCallback() {
             @Override
             public void onLocationResult(LocationResult locationResult) {
-                if (locationResult == null || userUpdateInfo == null) return;
+                if (locationResult == null || userUpdateDto == null) return;
                 for (Location location : locationResult.getLocations()) {
                     double latitude = location.getLatitude();
                     double longitude = location.getLongitude();
                     float speed = location.getSpeed();
-                    userUpdateInfo.updateUserInfo(latitude, longitude, speed);
+                    userUpdateDto.updateUserInfo(latitude, longitude, speed);
                 }
             }
         };
@@ -143,7 +123,7 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
         startMockMovement();
 
         //AllRoutesButton(임시), User의 id를 매개변수로 받는 getUesrRoutesButton(임시)
-        GetAllRoutes.getAllRoutesButton(binding);
+        GetRoutes.getAllRoutesButton(binding);
         GetUserRoutes.getUserRoutesButton(binding, userDto.getId());
 
         DeleteRoute.deleteButton(binding,1L, 1L);

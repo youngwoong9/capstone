@@ -46,6 +46,7 @@ public class GeofenceManager {
 
     // 지오펜스를 설정하는 것인데 여기서 시작점, 끝점의 좌표를 넣고 2개 생성하면
     // CourseInOut클래스에서 그 두개를 각각 GEOFENCE_TRANSITION_ENTER와 GEOFENCE_TRANSITION_EXIT로 받는다.
+    // radius는 범위
     // 각각 루트에 시작점에 왔을 때, 끝점에 갔을때를 의미한다.
     // CourseInOut의 그부분의 이벤트를 지정해주면 된다.
     public void setupGeofence(double latitude, double longitude, float radius, String geofenceId) {

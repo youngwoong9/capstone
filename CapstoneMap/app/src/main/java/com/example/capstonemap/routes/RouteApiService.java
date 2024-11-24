@@ -1,5 +1,7 @@
 package com.example.capstonemap.routes;
 
+import com.example.capstonemap.locationUpdate.UserRecordDto;
+
 import java.util.List;
 
 import retrofit2.Call;
@@ -27,4 +29,5 @@ public interface RouteApiService {
     // 삭제할 루트를 고르는 기능도 구현 해야함
     @DELETE("/api/users/{userId}/routes")
     Call<Void> deleteRoute( @Path("userId") Long userId, @Query("routeId") Long routeId);
+
 }

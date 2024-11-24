@@ -3,6 +3,8 @@ package com.example.capstoneMap.route;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.example.capstoneMap.locationUpdate.UserRecord;
+import com.example.capstoneMap.locationUpdate.UserRecordDto;
 import com.example.capstoneMap.user.User;
 import com.example.capstoneMap.user.UserDto;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -26,25 +28,39 @@ public class RouteDto {
 	private List<Double[]> locationList;
 	private Long userId;
 	private Double[] startLocation;
+	private List<UserRecordDto> userRecordDtos;
 	
 	
-	public RouteDto(String name, String encodedPath ,List<Double[]> locationList, Double[] startLocation) {
+	public RouteDto(Long id, String name, String encodedPath ,List<Double[]> locationList, Long userId, Double[] startLocation) {
+		this.id = id;
 	    this.name = name;
 	    this.encodedPath = encodedPath;
 	    this.locationList = locationList; 
 	    this.startLocation = startLocation;
+	    this.userId = userId;
 	}
 	
-	public RouteDto(String name, String encodedPath ,List<Double[]> locationList, Long userId, Double[] startLocation) {
+	public RouteDto(String name, String encodedPath ,List<Double[]> locationList, Long userId, Double[] startLocation, List<UserRecordDto> userRecordDtos) {
 	    this.name = name;
 	    this.encodedPath = encodedPath;
 	    this.locationList = locationList; 
 	    this.userId=userId;
 	    this.startLocation=startLocation;
+	    this.userRecordDtos = userRecordDtos;
 	}
 	
 	public Route toEntity() {
-		return new Route(id, name, encodedPath, convertLocationListToJson(locationList), startLocation);
+		if(userRecordDtos == null) {
+			return new Route(id, name, encodedPath, convertLocationListToJson(locationList), startLocation);
+		}else {
+			List<UserRecord> userRecords=new ArrayList<>();
+			
+			for(UserRecordDto i : userRecordDtos) {
+				userRecords.add(i.toEntity());
+			}
+			
+			return new Route(id, name, encodedPath, convertLocationListToJson(locationList), startLocation, userRecords);
+		}
 	}
 	
 	

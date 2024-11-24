@@ -20,7 +20,7 @@ import android.widget.Toast;
 import com.example.capstonemap.polyLine.ClickPolyLine;
 import com.example.capstonemap.polyLine.PolyLine;
 import com.example.capstonemap.databinding.ActivityMapsBinding;
-import com.example.capstonemap.locationUpdate.UserUpdateDto;
+import com.example.capstonemap.locationUpdate.UserUpdateInfo;
 import com.example.capstonemap.routes.DeleteRoute;
 import com.example.capstonemap.routes.GetRoutes;
 import com.example.capstonemap.user.GetUserRoutes;
@@ -38,6 +38,8 @@ import com.google.android.gms.maps.model.MarkerOptions;
 
 import java.util.Locale;
 
+import lombok.Getter;
+
 public class MapsActivity extends AppCompatActivity implements OnMapReadyCallback {
 
     private static final double MOCK_SPEED_M_S = 4.167; // 시속 15km/h를 m/s로 변환
@@ -47,9 +49,17 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
     private LocationManager locationManager;
     private FusedLocationProviderClient fusedLocationClient;
     private LocationRequest locationRequest;
-    private UserUpdateDto userUpdateDto;
     private LocationCallback locationCallback;
     private static final int LOCATION_PERMISSION_REQUEST_CODE = 1;
+
+    // 루트에 있을 때만 UserUpdateInfo에 좌표값, 속도값을 넣으려고함.
+    // RouteInOut과 연관된 변수.
+    public static boolean isInRoute = false;
+
+    // 일단 userId = 1, routeId = 1로 설정함.
+    // 사실은 유저가 바뀔때마다 루트가 바뀔때마다 다르게 설정해줘야함.
+    @Getter
+    private static UserUpdateInfo userUpdateInfo;
 
     private double latitude = 37.506632;  // 시작 위도
     private double longitude = 126.960733;  // 시작 경도
@@ -69,15 +79,31 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
 
         // LocationCallback 설정
         // LocationCallback을 통해서 현재 나의 위치 속도 등을 받아올 수 있다.
+        // 빼서 저장 해도 될듯.
         locationCallback = new LocationCallback() {
+
             @Override
             public void onLocationResult(LocationResult locationResult) {
-                if (locationResult == null || userUpdateDto == null) return;
+                //원래는 이걸 다른곳에서 받아와서 넣어줘야함
+                if(isInRoute){
+                    userUpdateInfo = new UserUpdateInfo(1L, 1L);
+                }
+
+                if (locationResult == null ) return;
+
                 for (Location location : locationResult.getLocations()) {
-                    double latitude = location.getLatitude();
-                    double longitude = location.getLongitude();
-                    float speed = location.getSpeed();
-                    userUpdateDto.updateUserInfo(latitude, longitude, speed);
+                    Double[] currentLocation = {location.getLatitude(), location.getLongitude()};
+                    double speed = location.getSpeed();
+
+                    // 루트 안에 있을 때만 userUpdateInfo를 갱신함.
+                    if(isInRoute){
+                        userUpdateInfo.setLocation(currentLocation);
+                        userUpdateInfo.setSpeed(speed);
+                    }else{
+                        if(userUpdateInfo != null){
+                            userUpdateInfo=null;
+                        }
+                    }
                 }
             }
         };
@@ -269,4 +295,17 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
         previousLocation = currentLocation;
         previousTime = currentLocation.getTime();
     }
+
+    //userUpdateInfo를 set하는 함수 다른 userId와 routeId를 받을 수 있도록 바꿔야한다.
+    public static void setUserUpdateInfo() {
+        userUpdateInfo = new UserUpdateInfo(1L, 1L);
+        userUpdateInfo.setStartedTime(System.currentTimeMillis());
+    }
+
+    public static void setEndUserUpdateInfo(){
+        userUpdateInfo.setElapsedTime((System.currentTimeMillis() - userUpdateInfo.getStartedTime()) / 1000);
+
+        userUpdateInfo.setUserRecordDto();
+    }
+
 }

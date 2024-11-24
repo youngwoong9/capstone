@@ -40,6 +40,7 @@ public class User {
     
     
     //mappedBy = 연관주인객체, CascadeType.ALL=이게 수정되면 다 수정됨, FetchType.LAZY= 필요할때만 호출됨
+    //cascade때문에 userRepository에 route를 저장한다면 routeRepository에 자동으로 route가 저장됨
     @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     @JoinColumn(name="userId")
     private List<Route> routes=new ArrayList<>();

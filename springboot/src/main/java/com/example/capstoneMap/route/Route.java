@@ -21,6 +21,7 @@ import lombok.ToString;
 @ToString
 @NoArgsConstructor
 @AllArgsConstructor
+@Table(name = "routes")
 public class Route {
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)

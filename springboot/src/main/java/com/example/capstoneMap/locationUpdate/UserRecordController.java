@@ -3,6 +3,7 @@ package com.example.capstoneMap.locationUpdate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.CrossOrigin;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -27,5 +28,15 @@ public class UserRecordController {
     public ResponseEntity<Route> saveRoute(@RequestBody UserRecordDto userRecordDto, 
     		@PathVariable("userId") Long userId, @PathVariable("routeId") Long routeId) {
         return userRecordService.saveRecord(userRecordDto, userId, routeId);
+    }
+    
+    @GetMapping("/api/users/{userId}/{routeId}/myOldRecord")
+    public ResponseEntity<UserRecord> getMyOldRecord(@PathVariable("userId") Long userId, @PathVariable("routeId") Long routeId){
+    	return userRecordService.getMyOldRecord(userId, routeId);
+    }
+    
+    @GetMapping("/api/users/{userId}/{routeId}/oldRecord")
+    public ResponseEntity<UserRecord> getOldRecord(@PathVariable("userId") Long userId, @PathVariable("routeId") Long routeId){
+    	return userRecordService.getOldRecord(userId, routeId);
     }
 }

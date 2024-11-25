@@ -41,17 +41,38 @@ public class UserRecordRepository {
             public void onResponse(Call<UserRecordDto> call, Response<UserRecordDto> response) {
                 if (response.isSuccessful() && response.body() != null) {
                     onSuccess.accept(response.body());
-                    System.out.println("유저 루트 조회 성공");
+                    System.out.println("유저 기록 조회 성공");
                 } else {
                     onError.run();
-                    System.out.println("유저 루트 조회 실패, 응답 코드: " + response.code());
+                    System.out.println("유저 기록 조회 실패, 응답 코드: " + response.code());
                 }
             }
 
             @Override
             public void onFailure(Call<UserRecordDto> call, Throwable t) {
                 onError.run();
-                System.out.println("유저 루트 조회 실패, 오류: " + t.getMessage());
+                System.out.println("유저 기록 조회 실패, 오류: " + t.getMessage());
+            }
+        });
+    }
+
+    public void getOldRecord(Long userId, Long routeId, Consumer<UserRecordDto> onSuccess, Runnable onError) {
+        ApiClient.getUserRecordApiService().getOldRecord(userId, routeId).enqueue(new Callback<UserRecordDto>() {
+            @Override
+            public void onResponse(Call<UserRecordDto> call, Response<UserRecordDto> response) {
+                if (response.isSuccessful() && response.body() != null) {
+                    onSuccess.accept(response.body());
+                    System.out.println("유저 기록 조회 성공");
+                } else {
+                    onError.run();
+                    System.out.println("유저 기록 조회 실패, 응답 코드: " + response.code());
+                }
+            }
+
+            @Override
+            public void onFailure(Call<UserRecordDto> call, Throwable t) {
+                onError.run();
+                System.out.println("유저 기록 조회 실패, 오류: " + t.getMessage());
             }
         });
     }

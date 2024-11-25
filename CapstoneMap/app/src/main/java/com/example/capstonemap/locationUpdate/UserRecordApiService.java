@@ -19,4 +19,8 @@ public interface UserRecordApiService {
     // 자신의 기록을 가져옴
     @GET("/api/users/{userId}/{routeId}/myOldRecord")
     Call<UserRecordDto> getMyOldRecord(@Path("userId") Long userId, @Path("routeId") Long routeId);
+
+    // 자신의 기록 가져오는 것과 통합할 수도 있지만 편의상 분리함
+    @GET("/api/users/{userId}/{routeId}/oldRecord")
+    Call<UserRecordDto> getOldRecord(@Path("userId") Long userId, @Path("routeId") Long routeId);
 }

@@ -1,9 +1,12 @@
 package com.example.capstoneMap.locationUpdate;
 
+import java.util.List;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.bind.annotation.PathVariable;
 
 import com.example.capstoneMap.route.Route;
 import com.example.capstoneMap.route.RouteDto;
@@ -42,4 +45,18 @@ public class UserRecordService {
         return ResponseEntity.ok(route);
     }
 	
+    
+    //일치하는걸 체크하는것도 필요하다고봄
+    public ResponseEntity<UserRecord> getMyOldRecord(@PathVariable("userId") Long userId, @PathVariable("routeId") Long routeId){
+    	UserRecord userRecord=routeRepository.findByRouteIdAndUserId(routeId, userId)
+    			.orElseThrow(() -> new IllegalArgumentException("User not found"));	
+       	return ResponseEntity.ok(userRecord);
+    }
+    
+    public ResponseEntity<UserRecord> getOldRecord(@PathVariable("userId") Long userId, @PathVariable("routeId") Long routeId){
+    	UserRecord userRecord=routeRepository.findByRouteIdAndUserId(routeId, userId)
+    			.orElseThrow(() -> new IllegalArgumentException("User not found"));
+    	
+       	return ResponseEntity.ok(userRecord);
+    }
 }

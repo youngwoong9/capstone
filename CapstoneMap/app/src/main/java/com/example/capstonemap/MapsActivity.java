@@ -17,6 +17,7 @@ import android.os.Looper;
 import android.util.Log;
 import android.widget.Toast;
 
+import com.example.capstonemap.locationUpdate.GetOldRecord;
 import com.example.capstonemap.polyLine.ClickPolyLine;
 import com.example.capstonemap.polyLine.PolyLine;
 import com.example.capstonemap.databinding.ActivityMapsBinding;
@@ -54,7 +55,9 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
 
     // 루트에 있을 때만 UserUpdateInfo에 좌표값, 속도값을 넣으려고함.
     // RouteInOut과 연관된 변수.
+    public static boolean isRouteSelected = false;
     public static boolean isInRoute = false;
+    public static boolean isRacing = false;
 
     // 일단 userId = 1, routeId = 1로 설정함.
     // 사실은 유저가 바뀔때마다 루트가 바뀔때마다 다르게 설정해줘야함.
@@ -77,18 +80,26 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
 
         locationRequest = locationRequestSetting();
 
+        // 루트 안에 있다고 판단하면 UserUpdateInfo 객체를 생성하고, userUpdateInfo의 oldMyRecord를 지정해주는 것.
+        // 루트를 고름 -> 자기 기록 불러옴
+        // 기록이 없으면 발생할 것도 만들어야함
+        if(isRouteSelected){
+            userUpdateInfo = new UserUpdateInfo(1L, 1L);
+            userUpdateInfo.setOldMyRecord(GetOldRecord.getMyOldRecord(1L, 1L));
+        }
+
+        // 경주모드면 내가 선택한 기록을 가져오게함
+        // 현재는 내 과거기록을 가져오게함
+        if(isRouteSelected && isRacing){
+            userUpdateInfo.setOldOtherRecord(GetOldRecord.getOldRecord(1L, 1L));
+        }
+
         // LocationCallback 설정
         // LocationCallback을 통해서 현재 나의 위치 속도 등을 받아올 수 있다.
         // 빼서 저장 해도 될듯.
         locationCallback = new LocationCallback() {
-
             @Override
             public void onLocationResult(LocationResult locationResult) {
-                //원래는 이걸 다른곳에서 받아와서 넣어줘야함
-                if(isInRoute){
-                    userUpdateInfo = new UserUpdateInfo(1L, 1L);
-                }
-
                 if (locationResult == null ) return;
 
                 for (Location location : locationResult.getLocations()) {

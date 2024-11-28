@@ -25,11 +25,13 @@ import com.example.bikemate.components.SearchBar
 import com.example.bikemate.components.FilterDialog
 import com.example.bikemate.states.CourseState
 import com.example.bikemate.viewmodels.CourseViewModel
+import com.example.bikemate.viewmodels.UserViewModel
 
 @Composable
 fun MainScreen(
     navController: NavHostController,
-    courseViewModel: CourseViewModel
+    courseViewModel: CourseViewModel,
+    userViewModel: UserViewModel
 ) {
     var showDialog by rememberSaveable { mutableStateOf(false) }         // 필터 모달창 보여주기
     var showBottomSheet by rememberSaveable { mutableStateOf(false) }    // 하단 시트 보여주기
@@ -97,7 +99,7 @@ fun MainScreen(
                     courseViewModel = courseViewModel,
                     navController = navController,
                     filteredCourseStates = filteredCourseStates,
-                    onDismissRequest = { showBottomSheet = false }
+                    onDismissRequest = { showBottomSheet = false },
                 )
             }
         }

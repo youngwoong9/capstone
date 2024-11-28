@@ -37,8 +37,8 @@ import com.example.bikemate.ui.theme.BikeMateTheme
 @Composable
 fun CourseItem(
     navController: NavHostController? = null,
-    courseState: CourseState,
-    onStarClick: () -> Unit,
+    courseState: CourseState = CourseState(),
+    onStarClick: () -> Unit = {},
     showRecordButton: Boolean = false,
 ) {
     Row(

@@ -45,12 +45,14 @@ import androidx.navigation.NavHostController
 import com.example.bikemate.components.CircularIconTextButton
 import com.example.bikemate.components.CourseItem
 import com.example.bikemate.viewmodels.CourseViewModel
+import com.example.bikemate.viewmodels.UserViewModel
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun CourseManagementScreen(
     navController: NavHostController,
     courseViewModel: CourseViewModel,
+    userViewModel: UserViewModel
 ) {
     // 즐겨찾기된 코스들
     val bookmarkedCourseStates by courseViewModel.bookmarkedCourseStatesFlow.collectAsState()

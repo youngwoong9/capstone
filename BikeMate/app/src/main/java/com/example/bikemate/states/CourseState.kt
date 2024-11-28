@@ -13,4 +13,7 @@ data class CourseState(
     val creationDate: LocalDateTime = LocalDateTime.now(),  // 코스 생성 시간
     val distance: Double = 0.0,                             // 코스 길이
     val radius: Double = 0.0,                               // 검색 위치의 반경
+
+    val createdBy: String = "",
+    val isPublic: Boolean = false,
 )

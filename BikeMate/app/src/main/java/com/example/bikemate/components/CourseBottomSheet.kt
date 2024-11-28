@@ -9,9 +9,13 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.ModalBottomSheet
+import androidx.compose.material3.Text
 import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -20,6 +24,7 @@ import androidx.navigation.NavHostController
 import com.example.bikemate.states.CourseState
 import com.example.bikemate.ui.theme.BikeMateTheme
 import com.example.bikemate.viewmodels.CourseViewModel
+import com.example.bikemate.viewmodels.UserViewModel
 
 
 // 코스 하단시트
@@ -31,6 +36,7 @@ fun CourseBottomSheet(
     filteredCourseStates: List<CourseState>,
     onDismissRequest: () -> Unit
 ) {
+
     val sheetState = rememberModalBottomSheetState(skipPartiallyExpanded = false)
 
     ModalBottomSheet(

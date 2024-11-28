@@ -13,6 +13,7 @@ import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.stateIn
+import kotlinx.coroutines.flow.update
 import java.time.LocalDateTime
 
 class CourseViewModel: ViewModel() {
@@ -35,25 +36,27 @@ class CourseViewModel: ViewModel() {
     // 초기 코스들을 저장
     private fun loadInitialCourses() {
         _courseStatesFlow.value = listOf(
-            CourseState(title = "입문자용 코스", description = "입문\n반경 500m", bookmark = false, icon = Icons.Default.Place,
+            CourseState(title = "입문자용 코스", description = "입문\n반경 500m", bookmark = false, icon = Icons.Default.Place, isPublic = true, createdBy = "test",
                 creationDate = LocalDateTime.of(2024, 11, 1, 0, 0, 0), distance = 0.5, radius = 0.5),
-            CourseState(title = "초급자용 코스", description = "초급\n반경 1km", bookmark = false, icon = Icons.Default.ShoppingCart,
+            CourseState(title = "초급자용 코스", description = "초급\n반경 1km", bookmark = false, icon = Icons.Default.ShoppingCart, isPublic = true, createdBy = "test",
                 creationDate = LocalDateTime.of(2024, 11, 2, 0, 0, 0), distance = 1.0, radius = 1.0),
-            CourseState(title = "중급자용 코스", description = "중급\n반경 1.5km", bookmark = false, icon = Icons.Default.AccountCircle,
+            CourseState(title = "중급자용 코스", description = "중급\n반경 1.5km", bookmark = false, icon = Icons.Default.AccountCircle, isPublic = true, createdBy = "test2",
                 creationDate = LocalDateTime.of(2024, 11, 3, 0, 0, 0), distance = 1.5, radius = 1.5),
-            CourseState(title = "고급자용 코스", description = "고급\n반경 2km", bookmark = false, icon = Icons.Default.Call,
+            CourseState(title = "고급자용 코스", description = "고급\n반경 2km", bookmark = false, icon = Icons.Default.Call, isPublic = true, createdBy = "test2",
                 creationDate = LocalDateTime.of(2024, 11, 4, 0,0, 0, 0), distance = 2.0, radius = 2.0),
         )
     }
 
+    // 생성한 코스 추가
+    fun addCourse(courseState: CourseState) {
+        _courseStatesFlow.update { it + courseState }
+    }
+
     // 즐겨찾기를 설정/해제하는 함수
     fun toggleBookmark(courseState: CourseState) {
-        val index = _courseStatesFlow.value.indexOf(courseState) // 전체 코스인지 북마크한 코스인지에 따라 어긋난 인덱스를 조정하는 과정
-
-        if (index != -1) {
-            _courseStatesFlow.value = _courseStatesFlow.value.toMutableList().apply {
-                val updatedCourseState = this[index].copy(bookmark = !this[index].bookmark)
-                this[index] = updatedCourseState
+        _courseStatesFlow.update { courseStates ->
+            courseStates.map {
+                if (it.id == courseState.id) it.copy(bookmark = !it.bookmark) else it
             }
         }
     }

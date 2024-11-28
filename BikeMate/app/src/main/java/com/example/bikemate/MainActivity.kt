@@ -36,22 +36,22 @@ class MainActivity : ComponentActivity() {
                 val courseViewModel: CourseViewModel = viewModel()
                 val userViewModel: UserViewModel = viewModel()
 
-                NavHost(navController = navController, startDestination = startDestination ) {
+                NavHost(navController = navController, startDestination = "main" ) {
                     // 로그인 화면
                     composable("login") {
                         LoginScreen(navController, userViewModel)
                     }
-                    // 로그인 화면
+                    // 회원가입 화면
                     composable("register") {
                         RegisterScreen(navController, userViewModel)
                     }
                     // 메인 화면
                     composable("main") {
-                        MainScreen(navController, courseViewModel)
+                        MainScreen(navController, courseViewModel, userViewModel)
                     }
                     // 코스관리 화면
                     composable("courseManagement") {
-                        CourseManagementScreen(navController, courseViewModel)
+                        CourseManagementScreen(navController, courseViewModel, userViewModel)
                     }
                     // 주행 화면
                     composable("cycling/{courseId}") { backStackEntry ->
@@ -65,7 +65,7 @@ class MainActivity : ComponentActivity() {
                     }
                     // 코스 생성 화면
                     composable("courseCreation") {
-                        CourseCreationScreen(navController)
+                        CourseCreationScreen(navController, userViewModel, courseViewModel)
                     }
                 }
             }

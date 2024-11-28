@@ -4,6 +4,7 @@ import static com.example.capstonemap.locationUpdate.LocationUpdateTime.location
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.compose.ui.platform.ComposeView;
 import androidx.core.app.ActivityCompat;
 
 import android.Manifest;
@@ -26,6 +27,7 @@ import com.example.capstonemap.routes.DeleteRoute;
 import com.example.capstonemap.routes.GetRoutes;
 import com.example.capstonemap.user.GetUserRoutes;
 import com.example.capstonemap.user.UserDto;
+import com.example.jetpackcompose.MainActivityKt;
 import com.google.android.gms.location.FusedLocationProviderClient;
 import com.google.android.gms.location.LocationCallback;
 import com.google.android.gms.location.LocationRequest;
@@ -74,6 +76,9 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
 
         binding = ActivityMapsBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
+
+        // 코틀린 함수를 호출하여 ComposeView를 설정
+        MainActivityKt.setMyComposableContent(this);
 
         // FusedLocationProviderClient 및 LocationRequest 설정
         fusedLocationClient = LocationServices.getFusedLocationProviderClient(this);
@@ -128,7 +133,6 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
         if (mapFragment != null) {
             mapFragment.getMapAsync(this);
         }
-
     }
 
     @Override

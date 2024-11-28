@@ -18,6 +18,9 @@ android {
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
 
         buildConfigField 'String', 'MAPS_API_KEY', "\"YOUR_API_KEY\""
+        vectorDrawables {
+            useSupportLibrary true
+        }
     }
 
     buildTypes {
@@ -36,6 +39,15 @@ android {
     buildFeatures {
         buildConfig = true
         viewBinding = true
+        compose = true
+    }
+    composeOptions {
+        kotlinCompilerExtensionVersion = "1.5.1"
+    }
+    packaging {
+        resources {
+            excludes += '/META-INF/{AL2.0,LGPL2.1}'
+        }
     }
 }
 
@@ -67,9 +79,30 @@ dependencies {
     implementation libs.retrofit
     implementation libs.converter.gson
     implementation libs.lombok
+    implementation libs.androidx.ui.android
+    implementation libs.androidx.navigation.compose
+    implementation libs.androidx.lifecycle.runtime.ktx
+    implementation libs.androidx.ui.graphics
+    implementation libs.androidx.ui.tooling.preview
     testImplementation libs.junit
     androidTestImplementation libs.androidx.junit
     androidTestImplementation libs.androidx.espresso.core
+    androidTestImplementation platform(libs.androidx.compose.bom)
+    androidTestImplementation libs.androidx.ui.test.junit4
     compileOnly 'org.projectlombok:lombok:1.18.26'
     annotationProcessor 'org.projectlombok:lombok:1.18.26'
+
+    // BOM (Bill of Materials) for Compose
+    implementation platform('androidx.compose:compose-bom:2024.11.00')
+
+    // Other dependencies
+    implementation 'androidx.activity:activity-compose:1.9.3'
+    implementation 'androidx.compose.material3:material3'
+    implementation 'com.google.accompanist:accompanist-themeadapter-material3:0.28.0'
+
+    // Debug implementation for Compose UI tooling
+    debugImplementation 'androidx.compose.ui:ui-tooling'
+
+    implementation "androidx.compose.ui:ui"
+    debugImplementation libs.androidx.ui.test.manifest
 }
